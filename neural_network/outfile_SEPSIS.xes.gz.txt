@@ -1,0 +1,10 @@
+Starting time: 18.05.25-09.20
+
+Hyperopt trials
+tid,loss,learning_rate,batch_size,n_heads,agg,time,n_params,perf_time,hidden_dim,n_layers
+0,1.220508,0.000000,6,1,10086.549,125161680,10084.520179,0,1
+
+Best parameters:{'batch_size': 8, 'dropout': 0.15, 'hidden_dim': 64, 'learning_rate': 0.001, 'n_heads': 4, 'n_layers': 1}
+
+Model parameters: 125161680
+Best Time taken: 10084.520179
