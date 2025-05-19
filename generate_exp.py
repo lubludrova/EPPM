@@ -67,20 +67,12 @@ if __name__ == '__main__':
         relation = pickle.load(f)
     # print(X_test[0], y_test[0])
     #
-    # indices = [0, 4, 7, 9, 11]
-    indices = [4, 7, 9]
+    indices = [0, 4, 7, 9, 11]
+
     graphs = [X_test[i] for i in indices]
     labels = [y_test[i] for i in indices]
     # graphs = X_test[1:2]
     # labels = y_test[1:2]
-
-    # вместо первых N подряд — случайная выборка для честного сравнения
-    # random.seed(42)
-    # total_cases = len(X_test)
-    # num_cases = min(number_of_examples, total_cases)
-    # selected = random.sample(range(total_cases), num_cases)
-    # graphs = [X_test[i] for i in selected]
-    # labels = [y_test[i] for i in selected]
 
     init_labels = labels.copy()
 
@@ -301,13 +293,13 @@ if __name__ == '__main__':
         elif explain == 'subx':
             print("SubX began")
             # --- Инициализируем HeteroSubgraphX ---------------------------------
-            num_ntypes = len(g0.ntypes)  # g0 — любой загруженный граф
+            num_ntypes = len(g0.ntypes)
 
             explainer = HeteroSubgraphX(
                 model.to(device),
                 num_hops=1,
-                num_rollouts=30,  # можно увеличить при желании
-                node_min=max(4, num_ntypes),  # ↓ объяснение «best_leaf=None»
+                num_rollouts=30,
+                node_min=max(4, num_ntypes),
                 log=False
             )
 
@@ -315,15 +307,15 @@ if __name__ == '__main__':
             for i, (g, l) in enumerate(test_loader):
                 g, l = g.to(device), l.to(device)
 
-                # 1) исходные признаки узлов
+
                 feat = {nt: g.ndata[nt][nt] for nt in g.ntypes}
 
-                # 2) целевой класс нужен в формате int
+
                 target_cls = int(l.argmax()) if l.ndim > 0 else int(l.item())
                 print('l', l)
                 print('target_cls', target_cls)
 
-                # 3) получаем важнейший подграф
+
                 #    node_dict: { ntype : Tensor[node_ids] }
                 print('explain_graph')
                 node_dict = explainer.explain_graph(
@@ -332,7 +324,7 @@ if __name__ == '__main__':
                     target_class=target_cls
                 )
 
-                # 4) cтроим node- и edge-маски из полученного подграфа
+
                 feat_mask = {nt: torch.zeros(g.num_nodes(nt), device=g.device)
                              for nt in g.ntypes}
                 for nt, nids in node_dict.items():
